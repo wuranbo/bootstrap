@@ -12,7 +12,7 @@ describe('yottabyte date parser', function () {
 
   describe('wih yottabyte formats', function() {
     it('should work correctly for `-1d`, `-1m`, `-1h`', function() {
-      compare_time = new Date();
+      var compare_time = new Date();
       expectParse('-1d', compare_time, (compare_time) - 1000 * 60 * 60 * 24 );
       expectParse('-1h', compare_time, (compare_time) - 1000 * 60 * 60 );
       expectParse('-1m', compare_time, (compare_time) - 1000 * 60);

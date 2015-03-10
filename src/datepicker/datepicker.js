@@ -1,4 +1,4 @@
-angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootstrap.position'])
+angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.yottabytedateparser', 'ui.bootstrap.dateparser', 'ui.bootstrap.position'])
 
 .constant('datepickerConfig', {
   formatDay: 'dd',
@@ -430,8 +430,8 @@ angular.module('ui.bootstrap.datepicker', ['ui.bootstrap.dateparser', 'ui.bootst
   showButtonBar: true
 })
 
-.directive('datepickerPopup', ['$compile', '$parse', '$document', '$position', 'dateFilter', 'dateParser', 'datepickerPopupConfig',
-function ($compile, $parse, $document, $position, dateFilter, dateParser, datepickerPopupConfig) {
+.directive('datepickerPopup', ['$compile', '$parse', '$document', '$position', 'dateFilter', 'yottabyteDateParser', 'dateParser', 'datepickerPopupConfig',
+function ($compile, $parse, $document, $position, dateFilter, yottabyteDateParser, dateParser, datepickerPopupConfig) {
   return {
     restrict: 'EA',
     require: 'ngModel',
@@ -509,7 +509,13 @@ function ($compile, $parse, $document, $position, dateFilter, dateParser, datepi
           ngModel.$setValidity('date', true);
           return viewValue;
         } else if (angular.isString(viewValue)) {
-          var date = dateParser.parse(viewValue, dateFormat) || new Date(viewValue);
+          var date = dateParser.parse(viewValue, dateFormat);
+          if(isNaN(date)){
+            date = yottabyteDateParser.parse(viewValue, new Date());
+          }
+          if (isNaN(date)){
+            date = new Date(viewValue);
+          }
           if (isNaN(date)) {
             ngModel.$setValidity('date', false);
             return undefined;
@@ -582,7 +588,7 @@ function ($compile, $parse, $document, $position, dateFilter, dateParser, datepi
 
       scope.$watch('isOpen', function(value) {
         if (value) {
-          scope.$broadcast('datepicker.focus');
+          // scope.$broadcast('datepicker.focus'); // wu.ranbo not autofocus the popup
           scope.position = appendToBody ? $position.offset(element) : $position.position(element);
           scope.position.top = scope.position.top + element.prop('offsetHeight');
 
